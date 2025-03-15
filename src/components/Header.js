@@ -59,16 +59,45 @@ const Header = () => {
     <>
       <Navbar bg="dark" variant="dark" style={{ height: "60px" }}>
         <Container>
-          
-          <Nav className="me-auto">
-            <NavLink to="/" className="text-decoration-none text-light">
+          <Nav className="me-auto align-items-center">
+            <NavLink
+              to="/"
+              className="text-decoration-none text-light fw-bold"
+              style={{ fontSize: "1.1rem" }}
+            >
               Home
+            </NavLink>
+            <NavLink
+              to="/cart"
+              className="text-decoration-none text-light d-flex align-items-center"
+              style={{
+                marginLeft: "3rem",
+                fontSize: "1.1rem",
+                fontWeight: "500",
+              }}
+            >
+              Cart
+              {getTotalItems() > 0 && (
+                <span
+                  className="ms-2 badge bg-primary"
+                  style={{ fontSize: "0.85rem" }}
+                >
+                  {getTotalItems()}
+                </span>
+              )}
             </NavLink>
           </Nav>
 
           <Badge
             badgeContent={getTotalItems()}
             color="primary"
+            sx={{
+              "& .MuiBadge-badge": {
+                fontSize: "0.75rem",
+                height: "20px",
+                minWidth: "20px",
+              },
+            }}
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
@@ -77,7 +106,13 @@ const Header = () => {
           >
             <i
               className="fa-solid fa-cart-shopping text-light"
-              style={{ fontSize: 25, cursor: "pointer" }}
+              style={{
+                fontSize: 22,
+                cursor: "pointer",
+                transition: "color 0.2s ease",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#e0e0e0")}
+              onMouseOut={(e) => (e.target.style.color = "white")}
             ></i>
           </Badge>
         </Container>
@@ -100,7 +135,7 @@ const Header = () => {
                 <thead>
                   <tr>
                     <th>Photo</th>
-                    <th>Restaurant Name</th>
+                    <th>Product</th>
                     <th>Quantity</th>
                     <th></th>
                   </tr>

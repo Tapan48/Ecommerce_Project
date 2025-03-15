@@ -7,7 +7,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { DLT } from "../redux/actions/action";
+import { DLT, updateCartQuantity } from "../redux/actions/action";
 
 const Header = () => {
   const [price, setPrice] = useState(0);
@@ -46,6 +46,14 @@ const Header = () => {
   useEffect(() => {
     total();
   }, [getdata]);
+
+  const handleQuantityChange = (item, newQuantity) => {
+    if (newQuantity > 0) {
+      dispatch(updateCartQuantity(item, newQuantity));
+    } else {
+      dispatch(DLT(item.id));
+    }
+  };
 
   return (
     <>
@@ -95,6 +103,8 @@ const Header = () => {
                   <tr>
                     <th>Photo</th>
                     <th>Restaurant Name</th>
+                    <th>Quantity</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,33 +123,59 @@ const Header = () => {
                         <td>
                           <p>{e.rname}</p>
                           <p>Price : ₹{e.price}</p>
-                          <p>Quantity: {e.quantity || 1}</p>
-                          <p
+                        </td>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <button
+                              className="btn btn-outline-secondary btn-sm fw-bold"
+                              style={{
+                                minWidth: "30px",
+                                fontSize: "16px",
+                                padding: "2px 8px",
+                              }}
+                              onClick={() =>
+                                handleQuantityChange(e, (e.quantity || 1) - 1)
+                              }
+                            >
+                              −
+                            </button>
+                            <span className="mx-2 fw-bold">
+                              {e.quantity || 1}
+                            </span>
+                            <button
+                              className="btn btn-outline-secondary btn-sm fw-bold"
+                              style={{
+                                minWidth: "30px",
+                                fontSize: "16px",
+                                padding: "2px 8px",
+                              }}
+                              onClick={() =>
+                                handleQuantityChange(e, (e.quantity || 1) + 1)
+                              }
+                            >
+                              +
+                            </button>
+                          </div>
+                        </td>
+                        <td>
+                          <i
+                            className="fas fa-trash"
                             style={{
                               color: "red",
                               fontSize: 20,
                               cursor: "pointer",
                             }}
                             onClick={() => dlt(e.id)}
-                          >
-                            <i className="fas fa-trash smalltrash"></i>
-                          </p>
-                        </td>
-                        <td
-                          className="mt-5"
-                          style={{
-                            color: "red",
-                            fontSize: 20,
-                            cursor: "pointer",
-                          }}
-                          onClick={() => dlt(e.id)}
-                        >
-                          <i className="fas fa-trash largetrash"></i>
+                          ></i>
                         </td>
                       </tr>
                     );
                   })}
-                  <p className="text-center">Total :₹ {price}</p>
+                  <tr>
+                    <td colSpan={4} className="text-end">
+                      <strong>Total: ₹{price}</strong>
+                    </td>
+                  </tr>
                 </tbody>
               </Table>
             </div>

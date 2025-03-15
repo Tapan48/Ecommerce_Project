@@ -31,17 +31,21 @@ const Header = () => {
     dispatch(DLT(id));
   };
 
+  const getTotalItems = () => {
+    return getdata.reduce((total, item) => total + (item.quantity || 1), 0);
+  };
+
   const total = () => {
     let price = 0;
-    getdata.map((ele, k) => {
-      price = ele.price * ele.qnty + price;
+    getdata.forEach((item) => {
+      price += item.price * (item.quantity || 1);
     });
     setPrice(price);
   };
 
   useEffect(() => {
     total();
-  }, [total]);
+  }, [getdata]);
 
   return (
     <>
@@ -57,7 +61,7 @@ const Header = () => {
           </Nav>
 
           <Badge
-            badgeContent={getdata.length}
+            badgeContent={getTotalItems()}
             color="primary"
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
@@ -66,7 +70,7 @@ const Header = () => {
             onClick={handleClick}
           >
             <i
-              class="fa-solid fa-cart-shopping text-light"
+              className="fa-solid fa-cart-shopping text-light"
               style={{ fontSize: 25, cursor: "pointer" }}
             ></i>
           </Badge>
@@ -96,35 +100,21 @@ const Header = () => {
                 <tbody>
                   {getdata.map((e) => {
                     return (
-                      <>
-                        <tr>
-                          <td>
-                            <NavLink to={`/cart/${e.id}`} onClick={handleClose}>
-                              <img
-                                src={e.imgdata}
-                                style={{ width: "5rem", height: "5rem" }}
-                                alt=""
-                              />
-                            </NavLink>
-                          </td>
-                          <td>
-                            <p>{e.rname}</p>
-                            <p>Price : ₹{e.price}</p>
-                            <p>Quantity : {e.qnty}</p>
-                            <p
-                              style={{
-                                color: "red",
-                                fontSize: 20,
-                                cursor: "pointer",
-                              }}
-                              onClick={() => dlt(e.id)}
-                            >
-                              <i className="fas fa-trash smalltrash"></i>
-                            </p>
-                          </td>
-
-                          <td
-                            className="mt-5"
+                      <tr key={e.id}>
+                        <td>
+                          <NavLink to={`/cart/${e.id}`} onClick={handleClose}>
+                            <img
+                              src={e.imgdata}
+                              style={{ width: "5rem", height: "5rem" }}
+                              alt=""
+                            />
+                          </NavLink>
+                        </td>
+                        <td>
+                          <p>{e.rname}</p>
+                          <p>Price : ₹{e.price}</p>
+                          <p>Quantity: {e.quantity || 1}</p>
+                          <p
                             style={{
                               color: "red",
                               fontSize: 20,
@@ -132,10 +122,21 @@ const Header = () => {
                             }}
                             onClick={() => dlt(e.id)}
                           >
-                            <i className="fas fa-trash largetrash"></i>
-                          </td>
-                        </tr>
-                      </>
+                            <i className="fas fa-trash smalltrash"></i>
+                          </p>
+                        </td>
+                        <td
+                          className="mt-5"
+                          style={{
+                            color: "red",
+                            fontSize: 20,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => dlt(e.id)}
+                        >
+                          <i className="fas fa-trash largetrash"></i>
+                        </td>
+                      </tr>
                     );
                   })}
                   <p className="text-center">Total :₹ {price}</p>
@@ -158,7 +159,7 @@ const Header = () => {
                   cursor: "pointer",
                 }}
               ></i>
-              <p style={{ fontSize: 22 }}>Your carts is empty</p>
+              <p style={{ fontSize: 22 }}>Your cart is empty</p>
               <img
                 src="./cart.gif"
                 alt=""

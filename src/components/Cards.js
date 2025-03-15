@@ -30,32 +30,36 @@ const Cards = () => {
         {data.map((element, id) => {
           const quantity = getItemQuantity(element.id);
           return (
-            <>
+            <div
+              key={element.id}
+              className="col-md-4 mb-4"
+              style={{ minWidth: "300px" }}
+            >
               <Card
-                style={{ width: "22rem", border: "none" }}
-                className="mx-2 mt-4 card_style"
+                style={{ height: "100%", border: "none" }}
+                className="mx-2 card_style"
               >
                 <Card.Img
                   variant="top"
                   src={element.imgdata}
-                  style={{ height: "16rem" }}
+                  style={{ height: "16rem", objectFit: "cover" }}
                   className="mt-3"
                 />
-                <Card.Body>
+                <Card.Body className="d-flex flex-column">
                   <Card.Title>{element.rname}</Card.Title>
                   <Card.Text>Price : ₹ {element.price}</Card.Text>
-                  <div className="button_div d-flex justify-content-center">
+                  <div className="button_div mt-auto">
                     <Button
                       variant="primary"
                       onClick={() => handleAddToCart(element)}
-                      className="col-lg-12"
+                      className="w-100"
                     >
                       Add to Cart {quantity > 0 && `(${quantity})`}
                     </Button>
                   </div>
                 </Card.Body>
               </Card>
-            </>
+            </div>
           );
         })}
       </div>

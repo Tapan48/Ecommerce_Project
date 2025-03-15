@@ -74,7 +74,7 @@ const Cardsdata = [
     {
         id: 7,
         rname: "Minimalist Backpack",
-        imgdata: "https://images.unsplash.com/photo-1553062407-98eeb64c6a45?q=80",
+        imgdata: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80", // Fixed the image URL
         address: "Bags, Travel",
         delimg: "https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?q=80",
         somedata: "600+ people bought this recently",

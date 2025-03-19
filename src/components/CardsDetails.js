@@ -1,162 +1,132 @@
 import React, { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { ADD, DLT, REMOVE, updateCartQuantity } from "../redux/actions/action";
+import { addToCart, DLT, updateCartQuantity } from "../redux/actions/action";
 
 const CardsDetails = () => {
   const [data, setData] = useState([]);
-  // console.log(data);
-
   const { id } = useParams();
-  // console.log(id);
-
-  const history = useNavigate();
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cartreducer.carts);
 
-  const getdata = useSelector((state) => state.cartreducer.carts);
-  // console.log(getdata);
-
-  const compare = () => {
-    let comparedata = getdata.filter((e) => {
-      return e.id == id;
-    });
-    setData(comparedata);
-  };
-
-  // add data
-
-  const send = (e) => {
-    // console.log(e);
-    dispatch(ADD(e));
-  };
-
-  const dlt = (id) => {
-    dispatch(DLT(id));
-    history("/");
-  };
-
-  // remove one
-  const remove = (item) => {
-    dispatch(REMOVE(item));
-  };
+  useEffect(() => {
+    const item = cartItems.find((item) => item.id.toString() === id);
+    setData(item ? [item] : []);
+  }, [id, cartItems]);
 
   const handleQuantityChange = (item, newQuantity) => {
     if (newQuantity > 0) {
       dispatch(updateCartQuantity(item, newQuantity));
+    } else {
+      handleRemove(item.id);
     }
   };
 
-  useEffect(() => {
-    compare();
-  }, [id]);
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(item));
+  };
+
+  const handleRemove = (itemId) => {
+    dispatch(DLT(itemId));
+    navigate("/cart");
+  };
+
+  if (data.length === 0) {
+    return (
+      <Container className="mt-5 text-center">
+        <h2>Product not found</h2>
+        <Button
+          variant="primary"
+          onClick={() => navigate("/")}
+          className="mt-3"
+        >
+          Back to Products
+        </Button>
+      </Container>
+    );
+  }
+
+  const item = data[0];
+  const cartItem = cartItems.find((cartItem) => cartItem.id === item.id);
+  const quantity = cartItem ? cartItem.quantity : 0;
 
   return (
-    <>
-      <div className="container mt-2">
-        <h2 className="text-center">Iteams Details Page</h2>
+    <Container className="mt-4">
+      <Card className="border-0 shadow-sm">
+        <Card.Body>
+          <Row className="align-items-center">
+            <Col md={6}>
+              <img
+                src={item.imgdata}
+                alt={item.rname}
+                className="img-fluid rounded"
+                style={{
+                  maxHeight: "400px",
+                  width: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </Col>
+            <Col md={6}>
+              <h2 className="mb-4">{item.rname}</h2>
+              <div className="mb-4">
+                <h4 className="text-primary mb-3">₹{item.price}</h4>
+                <p className="text-muted">{item.address}</p>
+                <div className="d-flex align-items-center mb-3">
+                  <span className="bg-success text-white px-2 py-1 rounded">
+                    {item.rating} ★
+                  </span>
+                  <span className="ms-2 text-muted">{item.somedata}</span>
+                </div>
+              </div>
 
-        <section className="container mt-3">
-          <div className="iteamsdetails">
-            {data.map((ele) => {
-              return (
-                <>
-                  <div className="items_img">
-                    <img src={ele.imgdata} alt="" />
+              {quantity > 0 ? (
+                <div className="d-flex align-items-center gap-3">
+                  <div className="d-flex align-items-center border rounded px-2">
+                    <Button
+                      variant="link"
+                      className="text-dark p-2"
+                      onClick={() => handleQuantityChange(item, quantity - 1)}
+                      style={{ width: "40px", minWidth: "40px" }}
+                    >
+                      −
+                    </Button>
+                    <span className="mx-3 fw-bold" style={{ minWidth: "20px", textAlign: "center" }}>
+                      {quantity}
+                    </span>
+                    <Button
+                      variant="link"
+                      className="text-dark p-2"
+                      onClick={() => handleQuantityChange(item, quantity + 1)}
+                      style={{ width: "40px", minWidth: "40px" }}
+                    >
+                      +
+                    </Button>
                   </div>
-
-                  <div className="details">
-                    <Table>
-                      <tr>
-                        <td>
-                          <p>
-                            {" "}
-                            <strong>Restaurant</strong> : {ele.rname}
-                          </p>
-                          <p>
-                            {" "}
-                            <strong>Price</strong> : ₹{ele.price}
-                          </p>
-                          <p>
-                            {" "}
-                            <strong>Dishes</strong> : {ele.address}
-                          </p>
-                          <p>
-                            {" "}
-                            <strong>Total</strong> :₹ {ele.price * ele.qnty}
-                          </p>
-                          <div
-                            className="mt-5 d-flex justify-content-between align-items-center"
-                            style={{
-                              width: 100,
-                              cursor: "pointer",
-                              background: "#ddd",
-                              color: "#111",
-                            }}
-                          >
-                            <span
-                              style={{ fontSize: 24 }}
-                              onClick={
-                                ele.qnty <= 1
-                                  ? () => dlt(ele.id)
-                                  : () => remove(ele)
-                              }
-                            >
-                              -
-                            </span>
-                            <span style={{ fontSize: 22 }}>{ele.qnty}</span>
-                            <span
-                              style={{ fontSize: 24 }}
-                              onClick={() => send(ele)}
-                            >
-                              +
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <p>
-                            <strong>Rating :</strong>{" "}
-                            <span
-                              style={{
-                                background: "green",
-                                color: "#fff",
-                                padding: "2px 5px",
-                                borderRadius: "5px",
-                              }}
-                            >
-                              {ele.rating} ★{" "}
-                            </span>
-                          </p>
-                          <p>
-                            <strong>Order Review :</strong>{" "}
-                            <span>{ele.somedata} </span>
-                          </p>
-                          <p>
-                            <strong>Remove :</strong>{" "}
-                            <span>
-                              <i
-                                className="fas fa-trash"
-                                onClick={() => dlt(ele.id)}
-                                style={{
-                                  color: "red",
-                                  fontSize: 20,
-                                  cursor: "pointer",
-                                }}
-                              ></i>{" "}
-                            </span>
-                          </p>
-                        </td>
-                      </tr>
-                    </Table>
-                  </div>
-                </>
-              );
-            })}
-          </div>
-        </section>
-      </div>
-    </>
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleRemove(item.id)}
+                  >
+                    Remove from Cart
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-100"
+                  onClick={() => handleAddToCart(item)}
+                >
+                  Add to Cart
+                </Button>
+              )}
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

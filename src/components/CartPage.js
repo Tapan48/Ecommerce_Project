@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 import { DLT, updateCartQuantity } from "../redux/actions/action";
 
 const CartPage = () => {
@@ -45,19 +46,29 @@ const CartPage = () => {
               <Card.Body>
                 <Row className="align-items-center">
                   <Col xs={3}>
-                    <img
-                      src={item.imgdata}
-                      alt={item.rname}
-                      style={{
-                        width: "100%",
-                        height: "120px",
-                        objectFit: "cover",
-                        borderRadius: "8px",
-                      }}
-                    />
+                    <NavLink
+                      to={`/cart/${item.id}`}
+                      className="text-decoration-none"
+                    >
+                      <img
+                        src={item.imgdata}
+                        alt={item.rname}
+                        style={{
+                          width: "100%",
+                          height: "120px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </NavLink>
                   </Col>
                   <Col xs={4}>
-                    <h5>{item.rname}</h5>
+                    <NavLink
+                      to={`/cart/${item.id}`}
+                      className="text-decoration-none text-dark"
+                    >
+                      <h5>{item.rname}</h5>
+                    </NavLink>
                     <p className="text-muted">Price: ₹{item.price}</p>
                   </Col>
                   <Col xs={3}>
